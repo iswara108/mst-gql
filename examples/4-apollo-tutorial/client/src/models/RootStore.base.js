@@ -13,6 +13,9 @@ import { RocketModel } from "./RocketModel"
 import { rocketModelPrimitives, RocketModelSelector } from "./RocketModel.base"
 import { UserModel } from "./UserModel"
 import { userModelPrimitives, UserModelSelector } from "./UserModel.base"
+import { TripUpdateResponseModel } from "./TripUpdateResponseModel"
+import { tripUpdateResponseModelPrimitives, TripUpdateResponseModelSelector } from "./TripUpdateResponseModel.base"
+
 
 
 
@@ -24,7 +27,7 @@ import { userModelPrimitives, UserModelSelector } from "./UserModel.base"
 */
 export const RootStoreBase = MSTGQLStore
   .named("RootStore")
-  .extend(configureStoreMixin([['LaunchConnection', () => LaunchConnectionModel], ['Launch', () => LaunchModel], ['Mission', () => MissionModel], ['Rocket', () => RocketModel], ['User', () => UserModel]], ['Launch', 'Rocket', 'User'], "js"))
+  .extend(configureStoreMixin([['LaunchConnection', () => LaunchConnectionModel], ['Launch', () => LaunchModel], ['Mission', () => MissionModel], ['Rocket', () => RocketModel], ['User', () => UserModel], ['TripUpdateResponse', () => TripUpdateResponseModel]], ['Launch', 'Rocket', 'User'], "js"))
   .props({
     launches: types.optional(types.map(types.late(() => LaunchModel)), {}),
     rockets: types.optional(types.map(types.late(() => RocketModel)), {}),
@@ -45,5 +48,18 @@ export const RootStoreBase = MSTGQLStore
       return self.query(`query me { me {
         ${typeof resultSelector === "function" ? resultSelector(new UserModelSelector()).toString() : resultSelector}
       } }`, variables, options)
+    },
+    mutateBookTrips(variables, resultSelector = tripUpdateResponseModelPrimitives.toString(), optimisticUpdate) {
+      return self.mutate(`mutation bookTrips($launchIds: [ID]!) { bookTrips(launchIds: $launchIds) {
+        ${typeof resultSelector === "function" ? resultSelector(new TripUpdateResponseModelSelector()).toString() : resultSelector}
+      } }`, variables, optimisticUpdate)
+    },
+    mutateCancelTrip(variables, resultSelector = tripUpdateResponseModelPrimitives.toString(), optimisticUpdate) {
+      return self.mutate(`mutation cancelTrip($launchId: ID!) { cancelTrip(launchId: $launchId) {
+        ${typeof resultSelector === "function" ? resultSelector(new TripUpdateResponseModelSelector()).toString() : resultSelector}
+      } }`, variables, optimisticUpdate)
+    },
+    mutateLogin(variables, optimisticUpdate) {
+      return self.mutate(`mutation login($email: String) { login(email: $email) }`, variables, optimisticUpdate)
     },
   }))

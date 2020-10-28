@@ -13,6 +13,8 @@ const rootStore = RootStore.create(undefined, {
   gqlHttpClient: createHttpClient("http://localhost:3001/graphql")
 })
 
+setInterval(() => rootStore.queryTodos(), 2000)
+
 export const App: React.FC = () => (
   <StoreContext.Provider value={rootStore}>
     <main>

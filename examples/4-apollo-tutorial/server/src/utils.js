@@ -1,5 +1,6 @@
-const SQL = require("sequelize")
-
+const { MongoClient } = require("mongodb")
+const usersDAO = require("./datasources/mongodb/usersDAO")
+const tripsDAO = require("./datasources/mongodb/tripsDAO")
 module.exports.paginateResults = ({
   after: cursor,
   pageSize = 20,
@@ -29,41 +30,14 @@ module.exports.paginateResults = ({
 }
 
 module.exports.createStore = () => {
-  const Op = SQL.Op
-  const operatorsAliases = {
-    $in: Op.in
-  }
-
-  const db = new SQL("database", "username", "password", {
-    dialect: "sqlite",
-    storage: "./store.sqlite",
-    operatorsAliases,
-    logging: false
+  const client = new MongoClient("mongodb://localhost/apollo-tutorial", {
+    useUnifiedTopology: true
   })
 
-  const users = db.define("user", {
-    id: {
-      type: SQL.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    createdAt: SQL.DATE,
-    updatedAt: SQL.DATE,
-    email: SQL.STRING,
-    token: SQL.STRING
+  client.connect().then((client) => {
+    usersDAO.init(client)
+    tripsDAO.init(client)
   })
 
-  const trips = db.define("trip", {
-    id: {
-      type: SQL.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    createdAt: SQL.DATE,
-    updatedAt: SQL.DATE,
-    launchId: SQL.INTEGER,
-    userId: SQL.INTEGER
-  })
-
-  return { users, trips }
+  return { users: usersDAO, trips: tripsDAO }
 }

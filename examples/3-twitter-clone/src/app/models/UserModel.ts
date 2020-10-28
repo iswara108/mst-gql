@@ -23,7 +23,7 @@ export const UserModel = UserModelBase.actions((self) => ({
       },
       (user) => user.name,
       () => {
-        self.name = name
+        self.name = name.toUpperCase()
       }
     )
   }

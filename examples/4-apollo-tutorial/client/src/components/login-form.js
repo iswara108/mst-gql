@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { useState } from "react"
 import styled, { css } from "react-emotion"
 import { size } from "polished"
 
@@ -9,42 +9,39 @@ import { ReactComponent as Curve } from "../assets/curve.svg"
 import { ReactComponent as Rocket } from "../assets/rocket.svg"
 import { colors, unit } from "../styles"
 
-export default class LoginForm extends Component {
-  state = { email: "" }
+function LoginForm({ login }) {
+  const [email, setEmail] = useState("")
 
-  onChange = (event) => {
-    const email = event.target.value
-    this.setState((s) => ({ email }))
+  const onChange = (event) => {
+    setEmail(event.target.value)
   }
 
-  onSubmit = (event) => {
+  const onSubmit = (event) => {
     event.preventDefault()
-    this.props.login(this.state.email)
+    login(email)
   }
 
-  render() {
-    return (
-      <Container>
-        <Header>
-          <StyledCurve />
-          <StyledLogo />
-        </Header>
-        <StyledRocket />
-        <Heading>Space Explorer</Heading>
-        <StyledForm onSubmit={this.onSubmit}>
-          <StyledInput
-            required
-            type="email"
-            name="email"
-            placeholder="Email"
-            data-testid="login-input"
-            onChange={this.onChange}
-          />
-          <Button type="submit">Log in</Button>
-        </StyledForm>
-      </Container>
-    )
-  }
+  return (
+    <Container>
+      <Header>
+        <StyledCurve />
+        <StyledLogo />
+      </Header>
+      <StyledRocket />
+      <Heading>Space Explorer</Heading>
+      <StyledForm onSubmit={onSubmit}>
+        <StyledInput
+          required
+          type="email"
+          name="email"
+          placeholder="Email"
+          data-testid="login-input"
+          onChange={onChange}
+        />
+        <Button type="submit">Log in</Button>
+      </StyledForm>
+    </Container>
+  )
 }
 
 /**
@@ -118,3 +115,5 @@ const StyledInput = styled("input")({
     borderColor: colors.primary
   }
 })
+
+export default LoginForm

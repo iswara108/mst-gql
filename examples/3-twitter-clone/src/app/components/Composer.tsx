@@ -8,7 +8,7 @@ import { useQuery } from "../models/reactUtils"
 
 export const Composer = observer(
   ({ replyTo }: { replyTo?: MessageModelType }) => {
-    const inputRef = useRef<HTMLInputElement>()
+    const [newText, setNewText] = React.useState("")
     const { store, loading, error, setQuery } = useQuery()
     return error ? (
       <Error>Failed to post message: ${error}</Error>
@@ -16,14 +16,11 @@ export const Composer = observer(
       <Loading />
     ) : (
       <div className="composer">
-        <input ref={inputRef} />
+        <input value={newText} onChange={(e) => setNewText(e.target.value)} />
         <button
           onClick={async () => {
-            const query = store.sendTweet(
-              inputRef.current!.value,
-              replyTo && replyTo.id
-            )
-            inputRef.current.value = ""
+            const query = store.sendTweet(newText, replyTo && replyTo.id)
+            setNewText("")
             setQuery(query)
             await query
             if (replyTo) replyTo.loadReplies()

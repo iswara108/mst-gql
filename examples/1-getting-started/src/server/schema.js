@@ -1,4 +1,4 @@
-const fetch = require("isomorphic-fetch")
+// const fetch = require("isomorphic-fetch")
 
 const store = {
   todos: [
@@ -63,6 +63,7 @@ const resolvers = {
         ...args.todo,
         complete: !!args.todo.complete
       }
+      console.log("added todo is ", JSON.stringify(todo, null, 2))
       store.todos.push(todo)
       return todo
     },

@@ -6,6 +6,15 @@ class LaunchAPI extends RESTDataSource {
     this.baseURL = "https://api.spacexdata.com/v2/"
   }
 
+  async getAllLaunches() {
+    const response = await this.get("launches")
+
+    // transform the raw launches to a more friendly
+    return Array.isArray(response)
+      ? response.map((launch) => this.launchReducer(launch))
+      : []
+  }
+
   // leaving this inside the class to make the class easier to test
   launchReducer(launch) {
     return {
@@ -25,21 +34,12 @@ class LaunchAPI extends RESTDataSource {
     }
   }
 
-  async getAllLaunches() {
-    const response = await this.get("launches")
-
-    // transform the raw launches to a more friendly
-    return Array.isArray(response)
-      ? response.map((launch) => this.launchReducer(launch))
-      : []
-  }
-
   async getLaunchById({ launchId }) {
-    const res = await this.get("launches", { flight_number: launchId })
-    return this.launchReducer(res[0])
+    const response = await this.get("launches", { flight_number: launchId })
+    return this.launchReducer(response[0])
   }
 
-  async getLaunchesByIds({ launchIds }) {
+  getLaunchesByIds({ launchIds }) {
     return Promise.all(
       launchIds.map((launchId) => this.getLaunchById({ launchId }))
     )

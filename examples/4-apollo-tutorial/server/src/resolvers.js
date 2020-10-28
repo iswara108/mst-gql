@@ -47,7 +47,7 @@ module.exports = {
       }
     },
     cancelTrip: async (_, { launchId }, { dataSources }) => {
-      const result = dataSources.userAPI.cancelTrip({ launchId })
+      const result = await dataSources.userAPI.cancelTrip({ launchId })
 
       if (!result)
         return {
